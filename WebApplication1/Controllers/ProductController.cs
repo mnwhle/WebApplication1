@@ -16,44 +16,40 @@ public class ProductController : Controller
     [HttpGet]
     public async Task<IActionResult> GetAllProducts(CancellationToken cancellationToken)
     {
-        var query = new GetAllProductsRequest();
-        var result = await _mediator.Send(query, cancellationToken);
+        var request = new GetAllProductsRequest();
+        var result = await _mediator.Send(request, cancellationToken);
         return Ok(result);
     }
 
     [HttpGet(template: "{id}")]
     public async Task<IActionResult> GetProduct(int id, CancellationToken cancellationToken)
     {
-        var query = new GetProductByIdRequest(id);
-        var result = await _mediator.Send(query, cancellationToken);
+        var request = new GetProductByIdRequest(id);
+        var result = await _mediator.Send(request, cancellationToken);
         return result is not null ? Ok(result) : NotFound();
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddProduct([FromBody] Product dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddProduct([FromBody] Product model, CancellationToken cancellationToken)
     {
-        var command = _mapper.Map<CreateProductRequest>(dto);
-        var result = await _mediator.Send(command, cancellationToken);
+        var request = _mapper.Map<CreateProductRequest>(model);
+        var result = await _mediator.Send(request, cancellationToken);
         return CreatedAtAction(nameof(GetProduct), routeValues: new { id = result.Id, }, value: result);
     }
 
-    //[HttpPost, Route("")]
-    //public async Task<IActionResult> Update(Product model, CancellationToken cancellationToken)
-    //{
-    //    var result = await _products.UpdateAsync(model, cancellationToken);
-    //    if (result)
-    //        return Ok("Product updated successfully");
-    //    else
-    //        return BadRequest("Product couldn't be updated");
-    //}
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] Product model, CancellationToken cancellationToken)
+    {
+        var request = _mapper.Map<UpdateProductRequest>(model);
+        var result = await _mediator.Send(request, cancellationToken);
+        return result is not null ? Ok() : NotFound();
+    }
 
-    //[HttpDelete, Route("")]
-    //public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
-    //{
-    //    var result = await _products.DeleteAsync(id, cancellationToken);
-    //    if (result)
-    //        return Ok("Product deleted successfully");
-    //    else
-    //        return BadRequest("Product couldn't be deleted");
-    //}
+    [HttpDelete(template: "{id}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        var request = new DeleteProductRequest(id);
+        var result = await _mediator.Send(request, cancellationToken);
+        return result is not null ? Ok() : NotFound();
+    }
 }

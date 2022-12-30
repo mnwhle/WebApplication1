@@ -23,6 +23,10 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : class, IPrima
 
     public virtual async Task<int?> InsertAsync(T? model, CancellationToken cancellationToken)
     {
+        if (model is null)
+        {
+            return null;
+        }
         using NHibernate.ISession session = HibernateHelper.OpenSession();
         using ITransaction transaction = session.BeginTransaction();
         var result = await session.SaveAsync(model, cancellationToken);
@@ -30,40 +34,28 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : class, IPrima
         return (int?)result;
     }
 
-    //public virtual Task<T?> UpdateAsync(T? model, CancellationToken cancellationToken)
-    //{
-    //    try
-    //    {
-    //        if (model is not null)
-    //        {
-    //            using NHibernate.ISession session = HibernateHelper.OpenSession();
-    //            using ITransaction transaction = session.BeginTransaction();
-    //            session.SaveAsync(model, cancellationToken);
-    //            transaction.Commit();
-    //            return Task.FromResult(true);
-    //        }
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        _logger.LogError(e.Message);
-    //    }
-    //    return Task.FromResult(false);
-    //}
+    public virtual async Task UpdateAsync(T? model, CancellationToken cancellationToken)
+    {
+        if (model is null)
+        {
+            return;
+        }
+        using NHibernate.ISession session = HibernateHelper.OpenSession();
+        using ITransaction transaction = session.BeginTransaction();
+        await session.UpdateAsync(model, cancellationToken);
+        transaction.Commit();
+    }
 
-    //public virtual Task<T?> DeleteAsync(P id, CancellationToken cancellationToken)
-    //{
-    //    try
-    //    {
-    //        using NHibernate.ISession session = HibernateHelper.OpenSession();
-    //        using ITransaction transaction = session.BeginTransaction();
-    //        session.DeleteAsync(id);
-    //        transaction.Commit();
-    //        return Task.FromResult(true);
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        _logger.LogError(e.Message);
-    //        return Task.FromResult(false);
-    //    }
-    //}
+    public virtual async Task DeleteAsync(int id, CancellationToken cancellationToken)
+    {
+        using NHibernate.ISession session = HibernateHelper.OpenSession();
+        using ITransaction transaction = session.BeginTransaction();
+        T? model = await SelectAsync(id, cancellationToken);
+        if (model is null)
+        {
+            return;
+        }
+        await session.DeleteAsync(model, cancellationToken);
+        transaction.Commit();
+    }
 }
