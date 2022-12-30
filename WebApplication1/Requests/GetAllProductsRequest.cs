@@ -1,0 +1,5 @@
+﻿namespace WebApplication1.Requests;
+
+public class GetAllProductsRequest : IRequest<List<ProductResponce>>
+{
+}
