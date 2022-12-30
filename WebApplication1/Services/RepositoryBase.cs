@@ -1,74 +1,36 @@
 ﻿namespace WebApplication1.Services;
 
-public abstract class RepositoryBase<T,P> : IRepository<T,P>
-    where T : class, IPrimaryKey<P>, new()
-    where P : struct
+public abstract class RepositoryBase<T> : IRepository<T> where T : class, IPrimaryKey, new()
 {
     private readonly ILogger _logger;
 
-    private readonly IMediator _mediatr;
-
-    public RepositoryBase(ILogger logger, IMediator mediatr)
+    public RepositoryBase(ILogger logger)
     {
         _logger = logger;
-        _mediatr = mediatr;
     }
 
-    public virtual Task<IEnumerable<T>> SelectAsync(CancellationToken token)
+    public virtual async Task<IEnumerable<T>> SelectAsync(CancellationToken cancellationToken)
     {
-        List<T> output = new();
-        try
-        {
-            using NHibernate.ISession session = HibernateHelper.OpenSession();
-            //var result = session.QueryOver<T>().Where(x => x.Id == id);
-            //    return Task.FromResult<T?>(result);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message);
-        }
-        return Task.FromResult(output.AsEnumerable());
+        using NHibernate.ISession session = HibernateHelper.OpenSession();
+        return await session.QueryOver<T>().ListAsync<T>(); ;
     }
 
-    public virtual Task<T?> SelectAsync(P id, CancellationToken token)
+    public virtual async Task<T?> SelectAsync(int id, CancellationToken cancellationToken)
     {
-        try
-        {
-            using NHibernate.ISession session = HibernateHelper.OpenSession();
-            T? result = session.QueryOver<T>().Where(x => x.Id == id).SingleOrDefault();
-            return Task.FromResult<T?>(result);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message);
-        }
-        return Task.FromResult<T?>(null);
+        using NHibernate.ISession session = HibernateHelper.OpenSession();
+        return await session.QueryOver<T>().Where(x => x.Id == id).SingleOrDefaultAsync(cancellationToken);
     }
 
-    public virtual Task<T?> InsertAsync(T? model, CancellationToken token)
+    public virtual async Task<int?> InsertAsync(T? model, CancellationToken cancellationToken)
     {
-        if (model is not null)
-        {
-            try
-            {
-                using NHibernate.ISession session = HibernateHelper.OpenSession();
-                using ITransaction transaction = session.BeginTransaction();
-                session.SaveAsync(model, token);
-                transaction.Commit();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message);
-            }
-            return Task.FromResult<T?>(model);
-        }
-        else
-        {
-            return Task.FromResult<T?>(model);
-        }
+        using NHibernate.ISession session = HibernateHelper.OpenSession();
+        using ITransaction transaction = session.BeginTransaction();
+        var result = await session.SaveAsync(model, cancellationToken);
+        transaction.Commit();
+        return (int?)result;
     }
 
-    //public virtual Task<T?> UpdateAsync(T? model, CancellationToken token)
+    //public virtual Task<T?> UpdateAsync(T? model, CancellationToken cancellationToken)
     //{
     //    try
     //    {
@@ -76,7 +38,7 @@ public abstract class RepositoryBase<T,P> : IRepository<T,P>
     //        {
     //            using NHibernate.ISession session = HibernateHelper.OpenSession();
     //            using ITransaction transaction = session.BeginTransaction();
-    //            session.SaveAsync(model, token);
+    //            session.SaveAsync(model, cancellationToken);
     //            transaction.Commit();
     //            return Task.FromResult(true);
     //        }
@@ -88,7 +50,7 @@ public abstract class RepositoryBase<T,P> : IRepository<T,P>
     //    return Task.FromResult(false);
     //}
 
-    //public virtual Task<T?> DeleteAsync(P id, CancellationToken token)
+    //public virtual Task<T?> DeleteAsync(P id, CancellationToken cancellationToken)
     //{
     //    try
     //    {

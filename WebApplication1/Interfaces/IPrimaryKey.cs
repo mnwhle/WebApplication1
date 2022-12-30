@@ -1,6 +1,6 @@
 ﻿namespace WebApplication1.Interfaces;
 
-public interface IPrimaryKey<T> where T : struct
+public interface IPrimaryKey
 {
-    T Id { get; set; }
+    int Id { get; set; }
 }

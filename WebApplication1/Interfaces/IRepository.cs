@@ -1,12 +1,10 @@
 ﻿namespace WebApplication1.Interfaces;
 
-public interface IRepository<T, P>
-    where T : class, IPrimaryKey<P>, new()
-    where P : struct
+public interface IRepository<T> where T : class, IPrimaryKey, new()
 {
     Task<IEnumerable<T>> SelectAsync(CancellationToken cancellationToken = default);
-    Task<T?> SelectAsync(P id, CancellationToken cancellationToken = default);
-    Task<T?> InsertAsync(T? model, CancellationToken cancellationToken = default);
+    Task<T?> SelectAsync(int id, CancellationToken cancellationToken = default);
+    Task<int?> InsertAsync(T? model, CancellationToken cancellationToken = default);
     //Task<T?> UpdateAsync(T? model, CancellationToken cancellationToken = default);
-    //Task<T?> DeleteAsync(P id, CancellationToken cancellationToken = default);
+    //Task<T?> DeleteAsync(int id, CancellationToken cancellationToken = default);
 }
