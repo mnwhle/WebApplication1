@@ -1,17 +1,20 @@
 ﻿namespace WebApplication1.Handlers;
 
-public class DeleteProductHandler : IRequestHandler<DeleteProductRequest, EmptyResponce>
+public class DeleteProductHandler : IRequestHandler<DeleteProductRequest, BooleanResponce>
 {
+    private readonly ILogger<DeleteProductHandler> _logger;
     private readonly IProductRepository _repository;
 
-    public DeleteProductHandler(IProductRepository repository)
+    public DeleteProductHandler(ILogger<DeleteProductHandler> logger, IProductRepository repository)
     {
+        _logger = logger;
         _repository = repository;
     }
 
-    public async Task<EmptyResponce> Handle(DeleteProductRequest request, CancellationToken cancellationToken)
+    public async Task<BooleanResponce> Handle(DeleteProductRequest request, CancellationToken cancellationToken)
     {
-        await _repository.DeleteAsync(request.Id, cancellationToken);
-        return new EmptyResponce();
+        var success = await _repository.DeleteAsync(request.Id, cancellationToken);
+        _logger.LogInformation($"Deleted product: {request.Id}");
+        return new BooleanResponce(success);
     }
 }

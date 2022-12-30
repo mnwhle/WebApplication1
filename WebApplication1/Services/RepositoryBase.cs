@@ -34,28 +34,44 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : class, IPrima
         return (int?)result;
     }
 
-    public virtual async Task UpdateAsync(T? model, CancellationToken cancellationToken)
+    public virtual async Task<bool> UpdateAsync(T? model, CancellationToken cancellationToken)
     {
         if (model is null)
         {
-            return;
+            return false;
         }
-        using NHibernate.ISession session = HibernateHelper.OpenSession();
-        using ITransaction transaction = session.BeginTransaction();
-        await session.UpdateAsync(model, cancellationToken);
-        transaction.Commit();
+        try
+        {
+            using NHibernate.ISession session = HibernateHelper.OpenSession();
+            using ITransaction transaction = session.BeginTransaction();
+            await session.UpdateAsync(model, cancellationToken);
+            transaction.Commit();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
-    public virtual async Task DeleteAsync(int id, CancellationToken cancellationToken)
+    public virtual async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
     {
         using NHibernate.ISession session = HibernateHelper.OpenSession();
         using ITransaction transaction = session.BeginTransaction();
         T? model = await SelectAsync(id, cancellationToken);
         if (model is null)
         {
-            return;
+            return false;
         }
-        await session.DeleteAsync(model, cancellationToken);
-        transaction.Commit();
+        try
+        {
+            await session.DeleteAsync(model, cancellationToken);
+            transaction.Commit();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 }

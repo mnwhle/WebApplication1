@@ -1,6 +1,6 @@
 ﻿namespace WebApplication1.Requests;
 
-public class DeleteProductRequest : IRequest<EmptyResponce>
+public class DeleteProductRequest : IRequest<BooleanResponce>
 {
     public int Id { get; private set; }
 

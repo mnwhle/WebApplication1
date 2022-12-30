@@ -1,20 +1,23 @@
 ﻿namespace WebApplication1.Handlers;
 
-public class UpdateProductHandler : IRequestHandler<UpdateProductRequest, EmptyResponce>
+public class UpdateProductHandler : IRequestHandler<UpdateProductRequest, BooleanResponce>
 {
+    private readonly ILogger<UpdateProductHandler> _logger;
     private readonly IProductRepository _repository;
     private readonly IMapper _mapper;
 
-    public UpdateProductHandler(IProductRepository repository, IMapper mapper)
+    public UpdateProductHandler(ILogger<UpdateProductHandler> logger, IProductRepository repository, IMapper mapper)
     {
+        _logger = logger;
         _repository = repository;
         _mapper = mapper;
     }
 
-    public async Task<EmptyResponce> Handle(UpdateProductRequest request, CancellationToken cancellationToken)
+    public async Task<BooleanResponce> Handle(UpdateProductRequest request, CancellationToken cancellationToken)
     {
         var model = _mapper.Map<Product>(request);
-        await _repository.UpdateAsync(model, cancellationToken);
-        return new EmptyResponce();
+        var success = await _repository.UpdateAsync(model, cancellationToken);
+        _logger.LogInformation($"Updated product: {request.Id}");
+        return new BooleanResponce(success);
     }
 }
