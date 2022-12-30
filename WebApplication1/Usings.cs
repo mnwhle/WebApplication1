@@ -11,4 +11,4 @@ global using WebApplication1.Models;
 global using WebApplication1.Requests;
 global using WebApplication1.Responces;
 global using WebApplication1.Services;
-global using System.Linq;
+

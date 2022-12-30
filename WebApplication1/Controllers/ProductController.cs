@@ -22,7 +22,7 @@ public class ProductController : Controller
     }
 
     [HttpGet(template: "{id}")]
-    public async Task<IActionResult> GetProduct(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetProduct(int id, CancellationToken cancellationToken)
     {
         var query = new GetProductByIdRequest(id);
         var result = await _mediator.Send(query, cancellationToken);
@@ -48,7 +48,7 @@ public class ProductController : Controller
     //}
 
     //[HttpDelete, Route("")]
-    //public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    //public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     //{
     //    var result = await _products.DeleteAsync(id, cancellationToken);
     //    if (result)

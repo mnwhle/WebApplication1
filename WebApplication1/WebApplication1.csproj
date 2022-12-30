@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Hibernate\hibernate.cfg.xml">
+    <EmbeddedResource Include="hibernate.cfg.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Hibernate\Product.hbm.xml">
@@ -19,6 +19,7 @@
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.1" />
     <PackageReference Include="NHibernate" Version="5.4.0" />
+    <PackageReference Include="Npgsql" Version="7.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 

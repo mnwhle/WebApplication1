@@ -26,6 +26,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-//HibernateHelper.LoadNHibernateCfg();
+HibernateHelper.LoadNHibernateCfg();
 
 app.Run();

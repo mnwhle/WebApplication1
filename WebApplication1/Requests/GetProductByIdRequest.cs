@@ -2,9 +2,9 @@
 
 public class GetProductByIdRequest : IRequest<ProductResponce>
 {
-    public Guid Id { get; private set; }
+    public int Id { get; private set; }
 
-    public GetProductByIdRequest(Guid id)
+    public GetProductByIdRequest(int id)
     {
         Id = id;
     }

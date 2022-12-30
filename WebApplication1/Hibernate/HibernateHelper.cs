@@ -24,7 +24,7 @@ public class HibernateHelper
     {
         var cfg = new Configuration();
         cfg.Configure();
-        cfg.AddAssembly(typeof(HibernateHelper).Assembly);
+        cfg.AddAssembly(typeof(Product).Assembly);
         new SchemaExport(cfg).Execute(true, true, false);
     }
 }

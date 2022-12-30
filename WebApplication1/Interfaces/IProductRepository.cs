@@ -1,5 +1,5 @@
 ﻿namespace WebApplication1.Interfaces;
 
-public interface IProductRepository : IRepository<Product>
+public interface IProductRepository : IRepository<Product, int>
 {
 }

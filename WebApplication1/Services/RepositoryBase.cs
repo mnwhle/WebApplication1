@@ -1,6 +1,8 @@
 ﻿namespace WebApplication1.Services;
 
-public abstract class RepositoryBase<T> : IRepository<T> where T : class, IPrimaryKeyGuid, new()
+public abstract class RepositoryBase<T,P> : IRepository<T,P>
+    where T : class, IPrimaryKey<P>, new()
+    where P : struct
 {
     private readonly ILogger _logger;
 
@@ -28,7 +30,7 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : class, IPrima
         return Task.FromResult(output.AsEnumerable());
     }
 
-    public virtual Task<T?> SelectAsync(Guid id, CancellationToken token)
+    public virtual Task<T?> SelectAsync(P id, CancellationToken token)
     {
         try
         {
@@ -86,7 +88,7 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : class, IPrima
     //    return Task.FromResult(false);
     //}
 
-    //public virtual Task<T?> DeleteAsync(Guid id, CancellationToken token)
+    //public virtual Task<T?> DeleteAsync(P id, CancellationToken token)
     //{
     //    try
     //    {
