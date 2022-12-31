@@ -2,6 +2,7 @@
 
 public class ValidationBehavior<TRequest, TResponce> : IPipelineBehavior<TRequest, TResponce>
     where TRequest : IRequest<TResponce>
+    where TResponce : ValidateableResponceBase
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 

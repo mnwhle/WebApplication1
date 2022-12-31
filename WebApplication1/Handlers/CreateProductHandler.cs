@@ -1,6 +1,6 @@
 ﻿namespace WebApplication1.Handlers;
 
-public class CreateProductHandler : IRequestHandler<CreateProductRequest, ProductResponce?>
+public class CreateProductHandler : IRequestHandler<CreateProductRequest, ValidateableResponce<ProductResponce>>
 {
     private readonly ILogger<CreateProductHandler> _logger;
     private readonly IProductRepository _repository;
@@ -13,16 +13,16 @@ public class CreateProductHandler : IRequestHandler<CreateProductRequest, Produc
         _mapper = mapper;
     }
 
-    public async Task<ProductResponce?> Handle(CreateProductRequest request, CancellationToken cancellationToken)
+    public async Task<ValidateableResponce<ProductResponce>> Handle(CreateProductRequest request, CancellationToken cancellationToken)
     {
         var model = _mapper.Map<Product>(request);
         var result = await _repository.InsertAsync(model, cancellationToken);
         if (result is null)
         {
-            return null;
+            return new ValidateableResponce<ProductResponce>();
         }
         model.Id = result.Value;
         _logger.LogInformation($"Created product: {model.Id}, {model.Name}");
-        return _mapper.Map<ProductResponce?>(model);
+        return new ValidateableResponce<ProductResponce>(_mapper.Map<ProductResponce?>(model));
     }
 }

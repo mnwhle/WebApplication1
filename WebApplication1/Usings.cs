@@ -14,3 +14,4 @@ global using WebApplication1.Services;
 global using WebApplication1.Validations;
 global using WebApplication1.PipelineBehaviors;
 global using FluentValidation;
+global using System.Collections.ObjectModel;
