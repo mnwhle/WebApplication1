@@ -15,57 +15,57 @@ public class ProductController : Controller
     public async Task<IActionResult> GetAllProducts(CancellationToken cancellationToken)
     {
         var request = new GetAllProductsRequest();
-        var responce = await _mediator.Send(request, cancellationToken);
-        if (!responce.IsValid)
+        var response = await _mediator.Send(request, cancellationToken);
+        if (!response.IsValid)
         {
-            return BadRequest(responce.FormatErrors());
+            return BadRequest(response.FormatErrors());
         }
-        return Ok(responce);
+        return Ok(response);
     }
 
     [HttpGet(template: "{id}")]
     public async Task<IActionResult> GetProduct(int id, CancellationToken cancellationToken)
     {
         var request = new GetProductByIdRequest(id);
-        var responce = await _mediator.Send(request, cancellationToken);
-        if (!responce.IsValid)
+        var response = await _mediator.Send(request, cancellationToken);
+        if (!response.IsValid)
         {
-            return BadRequest(responce.FormatErrors());
+            return BadRequest(response.FormatErrors());
         }
-        return responce is not null ? Ok(responce) : NotFound();
+        return response is not null ? Ok(response) : NotFound();
     }
 
     [HttpPost]
     public async Task<IActionResult> AddProduct([FromBody] CreateProductRequest model, CancellationToken cancellationToken)
     {
-        var responce = await _mediator.Send(model, cancellationToken);
-        if (!responce.IsValid)
+        var response = await _mediator.Send(model, cancellationToken);
+        if (!response.IsValid)
         {
-            return BadRequest(responce.FormatErrors());
+            return BadRequest(response.FormatErrors());
         }
-        return CreatedAtAction(nameof(GetProduct), routeValues: new { id = responce?.Model?.Id, }, value: responce?.Model);
+        return CreatedAtAction(nameof(GetProduct), routeValues: new { id = response?.Model?.Id, }, value: response?.Model);
     }
 
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] UpdateProductRequest model, CancellationToken cancellationToken)
     {
-        var responce = await _mediator.Send(model, cancellationToken);
-        if (!responce.IsValid)
+        var response = await _mediator.Send(model, cancellationToken);
+        if (!response.IsValid)
         {
-            return BadRequest(responce.FormatErrors());
+            return BadRequest(response.FormatErrors());
         }
-        return (responce?.Model?.Success ?? false) ? Ok() : BadRequest();
+        return (response?.Model?.Success ?? false) ? Ok() : BadRequest();
     }
 
     [HttpDelete(template: "{id}")]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
         var request = new DeleteProductRequest(id);
-        var responce = await _mediator.Send(request, cancellationToken);
-        if (!responce.IsValid)
+        var response = await _mediator.Send(request, cancellationToken);
+        if (!response.IsValid)
         {
-            return BadRequest(responce.FormatErrors());
+            return BadRequest(response.FormatErrors());
         }
-        return (responce?.Model?.Success ?? false) ? Ok() : BadRequest();
+        return (response?.Model?.Success ?? false) ? Ok() : BadRequest();
     }
 }

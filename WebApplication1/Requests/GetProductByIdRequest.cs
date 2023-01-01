@@ -1,6 +1,6 @@
 ﻿namespace WebApplication1.Requests;
 
-public class GetProductByIdRequest : IRequest<ValidateableResponce<ProductResponce>>
+public class GetProductByIdRequest : IRequest<ValidateableResponse<ProductResponse>>
 {
     public int Id { get; private set; }
 

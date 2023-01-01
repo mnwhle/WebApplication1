@@ -1,6 +1,6 @@
 ﻿namespace WebApplication1.Handlers;
 
-public class DeleteProductHandler : IRequestHandler<DeleteProductRequest, ValidateableResponce<BooleanResponce>>
+public class DeleteProductHandler : IRequestHandler<DeleteProductRequest, ValidateableResponse<BooleanResponse>>
 {
     private readonly ILogger<DeleteProductHandler> _logger;
     private readonly IProductRepository _repository;
@@ -11,10 +11,10 @@ public class DeleteProductHandler : IRequestHandler<DeleteProductRequest, Valida
         _repository = repository;
     }
 
-    public async Task<ValidateableResponce<BooleanResponce>> Handle(DeleteProductRequest request, CancellationToken cancellationToken)
+    public async Task<ValidateableResponse<BooleanResponse>> Handle(DeleteProductRequest request, CancellationToken cancellationToken)
     {
         var success = await _repository.DeleteAsync(request.Id, cancellationToken);
         _logger.LogInformation($"Deleted product: {request.Id}");
-        return new ValidateableResponce<BooleanResponce>(new BooleanResponce(success));
+        return new ValidateableResponse<BooleanResponse>(new BooleanResponse(success));
     }
 }

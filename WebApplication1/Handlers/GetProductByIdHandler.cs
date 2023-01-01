@@ -1,6 +1,6 @@
 ﻿namespace WebApplication1.Handlers;
 
-public class GetProductByIdHandler : IRequestHandler<GetProductByIdRequest, ValidateableResponce<ProductResponce>>
+public class GetProductByIdHandler : IRequestHandler<GetProductByIdRequest, ValidateableResponse<ProductResponse>>
 {
     private readonly IProductRepository _repository;
     private readonly IMapper _mapper;
@@ -11,9 +11,9 @@ public class GetProductByIdHandler : IRequestHandler<GetProductByIdRequest, Vali
         _mapper = mapper;
     }
 
-    public async Task<ValidateableResponce<ProductResponce>> Handle(GetProductByIdRequest request, CancellationToken cancellationToken)
+    public async Task<ValidateableResponse<ProductResponse>> Handle(GetProductByIdRequest request, CancellationToken cancellationToken)
     {
         var item = await _repository.SelectAsync(request.Id, cancellationToken);
-        return new ValidateableResponce<ProductResponce>(_mapper.Map<ProductResponce>(item));
+        return new ValidateableResponse<ProductResponse>(_mapper.Map<ProductResponse>(item));
     }
 }

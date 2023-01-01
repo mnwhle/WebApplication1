@@ -1,5 +1,5 @@
 ﻿namespace WebApplication1.Requests;
 
-public class GetAllProductsRequest : IRequest<ValidateableResponce<List<ProductResponce>>>
+public class GetAllProductsRequest : IRequest<ValidateableResponse<List<ProductResponse>>>
 {
 }

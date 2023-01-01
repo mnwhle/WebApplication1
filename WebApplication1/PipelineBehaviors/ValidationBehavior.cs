@@ -1,8 +1,8 @@
 ﻿namespace WebApplication1.PipelineBehaviors;
 
-public class ValidationBehavior<TRequest, TResponce> : IPipelineBehavior<TRequest, TResponce>
-    where TRequest : IRequest<TResponce>
-    where TResponce : ValidateableResponceBase
+public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
+    where TResponse : ValidateableResponseBase
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -11,7 +11,7 @@ public class ValidationBehavior<TRequest, TResponce> : IPipelineBehavior<TReques
         _validators = validators;
     }
 
-    public Task<TResponce> Handle(TRequest request, RequestHandlerDelegate<TResponce> next, CancellationToken cancellationToken)
+    public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var context = new ValidationContext<TRequest>(request);
         var failures = _validators
@@ -21,8 +21,14 @@ public class ValidationBehavior<TRequest, TResponce> : IPipelineBehavior<TReques
             .ToList();
         if (failures.Any())
         {
-            // Bad idea
-            //throw new ValidationException(failures);
+            // Bad idea: throw new ValidationException(failures);
+            var responseType = typeof(TResponse);
+            var resultType = responseType.GetGenericArguments();
+            var invalidResponseType = typeof(ValidateableResponse<>).MakeGenericType(resultType);
+            Debug.WriteLine(invalidResponseType);
+            object?[]? args = new object?[2] { null, failures };
+            var invalidResponse = Activator.CreateInstance(invalidResponseType, args) as TResponse;
+            Debug.Assert(invalidResponse is not null);
         }
         return next();
     }

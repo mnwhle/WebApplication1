@@ -4,7 +4,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<Product, ProductResponce>().ReverseMap();
+        CreateMap<Product, ProductResponse>().ReverseMap();
         CreateMap<Product, CreateProductRequest>().ReverseMap();
         CreateMap<Product, UpdateProductRequest>().ReverseMap();
     }
