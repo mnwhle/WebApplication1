@@ -15,8 +15,8 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
     {
         var context = new ValidationContext<TRequest>(request);
         var failures = _validators
-            .Select(x => x.Validate(context))
-            .SelectMany(x => x.Errors)
+            .Select(async x => await x.ValidateAsync(context))
+            .SelectMany(x => x.Result.Errors)
             .Where(x => x is not null)
             .ToList();
         if (failures.Any())
@@ -27,7 +27,6 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
             var resultType = responseType.GetGenericArguments();
             var invalidResponseType = typeof(ValidateableResponse<>).MakeGenericType(resultType);
             Debug.WriteLine(invalidResponseType);
-            //object?[]? args = new object?[] { null, failures };
             var invalidResponse = Activator.CreateInstance(invalidResponseType, null, failures.Select(x => x.ErrorMessage).ToList()) as TResponse;
             Debug.Assert(invalidResponse is not null);
             return invalidResponse;

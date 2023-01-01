@@ -2,4 +2,5 @@
 
 public interface IProductRepository : IRepository<Product>
 {
+    Task<bool> IsNameAlreadyExistsAsync(string name, CancellationToken cancellationToken = default);
 }

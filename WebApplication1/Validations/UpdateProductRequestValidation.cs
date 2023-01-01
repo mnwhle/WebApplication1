@@ -2,8 +2,21 @@
 
 public class UpdateProductRequestValidation : AbstractValidator<UpdateProductRequest>
 {
-    public UpdateProductRequestValidation()
+    private readonly IProductRepository _repository;
+
+    public UpdateProductRequestValidation(IProductRepository repository)
     {
-        RuleFor(x => x.Name).NotEmpty();
+        _repository = repository;
+
+        RuleFor(x => x.Name)
+            .NotEmpty()
+            .MustAsync(async (name, token) => await CheckNameIsNotExist(name, default))
+            .WithMessage((u, name) => $"Product '{name}' already exists.");
+    }
+
+    private async Task<bool> CheckNameIsNotExist(string name, CancellationToken cancellationToken)
+    {
+        bool exist = await _repository.IsNameAlreadyExistsAsync(name, cancellationToken);
+        return !exist;
     }
 }
