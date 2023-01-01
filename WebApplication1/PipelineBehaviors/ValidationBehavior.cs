@@ -15,21 +15,20 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
     {
         var context = new ValidationContext<TRequest>(request);
         var failures = _validators
-            .Select(async x => await x.ValidateAsync(context))
-            .SelectMany(x => x.Result.Errors)
+            .Select(x => x.Validate(context))
+            .SelectMany(x => x.Errors)
             .Where(x => x is not null)
-            .Select(x => x.ErrorMessage)
             .ToList();
         if (failures.Any())
         {
-            // It is a possible solution but a bad idea to throw an exception here.
+            // It is a possible but bad solution to throw an exception on validation failure.
             // Therefore we construct an invalid response here.
             var responseType = typeof(TResponse);
             var resultType = responseType.GetGenericArguments();
             var invalidResponseType = typeof(ValidateableResponse<>).MakeGenericType(resultType);
             Debug.WriteLine(invalidResponseType);
             //object?[]? args = new object?[] { null, failures };
-            var invalidResponse = Activator.CreateInstance(invalidResponseType, null, failures) as TResponse;
+            var invalidResponse = Activator.CreateInstance(invalidResponseType, null, failures.Select(x => x.ErrorMessage).ToList()) as TResponse;
             Debug.Assert(invalidResponse is not null);
             return invalidResponse;
         }
