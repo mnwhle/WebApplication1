@@ -11,25 +11,31 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         _validators = validators;
     }
 
-    public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var context = new ValidationContext<TRequest>(request);
         var failures = _validators
-            .Select(x => x.Validate(context))
-            .SelectMany(x => x.Errors)
+            .Select(async x => await x.ValidateAsync(context))
+            .SelectMany(x => x.Result.Errors)
             .Where(x => x is not null)
+            .Select(x => x.ErrorMessage)
             .ToList();
         if (failures.Any())
         {
-            // Bad idea: throw new ValidationException(failures);
+            // It is a possible solution but a bad idea to throw an exception here.
+            // Therefore we construct an invalid response here.
             var responseType = typeof(TResponse);
             var resultType = responseType.GetGenericArguments();
             var invalidResponseType = typeof(ValidateableResponse<>).MakeGenericType(resultType);
             Debug.WriteLine(invalidResponseType);
-            object?[]? args = new object?[2] { null, failures };
-            var invalidResponse = Activator.CreateInstance(invalidResponseType, args) as TResponse;
+            //object?[]? args = new object?[] { null, failures };
+            var invalidResponse = Activator.CreateInstance(invalidResponseType, null, failures) as TResponse;
             Debug.Assert(invalidResponse is not null);
+            return invalidResponse;
         }
-        return next();
+        else
+        {
+            return await next();
+        }
     }
 }
