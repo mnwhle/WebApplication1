@@ -12,4 +12,11 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
         var count = await session.QueryOver<Product>().Where(x => x.Name == name).RowCountAsync(cancellationToken);
         return count > 0;
     }
+
+    public async Task<bool> IsNameAlreadyExistsExcludeIdAsync(int id, string name, CancellationToken cancellationToken)
+    {
+        using NHibernate.ISession session = HibernateHelper.OpenSession();
+        var count = await session.QueryOver<Product>().Where(x => x.Id != id && x.Name == name).RowCountAsync(cancellationToken);
+        return count > 0;
+    }
 }

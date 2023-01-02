@@ -10,7 +10,7 @@ public class CreateProductRequestValidation : AbstractValidator<CreateProductReq
 
         RuleFor(x => x.Name)
             .NotEmpty()
-            .MustAsync(async (name, token) => await CheckNameIsNotExist(name, default))
+            .MustAsync(async (name, cancellationToken) => await CheckNameIsNotExist(name, default))
             .WithMessage((u, name) => $"Product '{name}' already exists.");
     }
 
