@@ -12,7 +12,7 @@ public class UpdateProductRequestValidation : AbstractValidator<UpdateProductReq
 
         RuleFor(x => x)
             .MustAsync(async (x, cancellationToken) => await IsNameAlreadyExistsExcludeId(x.Id, x.Name, default))
-            .WithMessage((u, name) => $"Product '{name}' already exists.");
+            .WithMessage(x => $"Product '{x.Name}' already exists.");
     }
 
     private async Task<bool> IsNameAlreadyExistsExcludeId(int id, string name, CancellationToken cancellationToken)

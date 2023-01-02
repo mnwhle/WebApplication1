@@ -12,6 +12,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(CreateProductRequestValidation
 
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddSingleton<Options>();
 
 var app = builder.Build();
 
@@ -28,6 +29,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-HibernateHelper.LoadNHibernateCfg();
+Options options = app.Services.GetRequiredService<Options>();
+HibernateHelper.InitSessionFactory(options);
 
 app.Run();
