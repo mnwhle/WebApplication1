@@ -1,6 +1,3 @@
-using System.Reflection;
-using System.Threading;
-
 namespace WebApplication1.Test;
 
 public class ProductRepositoryTest : TestBed<TestFixture>
