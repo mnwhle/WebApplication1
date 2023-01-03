@@ -10,10 +10,10 @@ public class HibernateHelper
     {
         return Fluently.Configure()
             .Database(PostgreSQLConfiguration.PostgreSQL82.ConnectionString(connectionString).ShowSql().FormatSql())
-            //.Cache(
-            //    c => c.UseQueryCache()
-            //        .UseSecondLevelCache()
-            //        .ProviderClass<NHibernate.Cache.HashtableCacheProvider>())
+            .Cache(
+                c => c.UseQueryCache()
+                    .UseSecondLevelCache()
+                    .ProviderClass<NHibernate.Cache.HashtableCacheProvider>())
             .Mappings(m => m.FluentMappings.AddFromAssemblyOf<Program>())
             .ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(true, true))
             .BuildSessionFactory();
