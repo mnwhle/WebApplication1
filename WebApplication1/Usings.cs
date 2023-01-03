@@ -15,6 +15,7 @@ global using System.Diagnostics;
 global using System.Linq;
 global using WebApplication1.AutoMapper;
 global using WebApplication1.Config;
+global using WebApplication1.Extensions;
 global using WebApplication1.Hibernate;
 global using WebApplication1.Interfaces;
 global using WebApplication1.Models;

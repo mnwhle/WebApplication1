@@ -30,13 +30,13 @@ public abstract class ConfigBase
         return value;
     }
 
-    //public HashSet<T2> GetArray<T1, T2>(string key, Func<List<T1>, HashSet<T2>> fnOnReloadAdjust)
-    //{
-    //    string complete_key = SectionPrefix + key;
-    //    List<T1> array = cfg.GetSection(complete_key).Get<List<T1>>() ?? new();
-    //    log.Info($"Option loaded: {complete_key} = {array.FormatCollectionArray(20)}");
-    //    HashSet<T2> hashset = fnOnReloadAdjust(array);
-    //    log.Info($"Option adjusted: {complete_key} = {hashset.FormatCollectionHash(20)}");
-    //    return hashset;
-    //}
+    public HashSet<T2> GetArray<T1, T2>(string key, Func<List<T1>, HashSet<T2>> fnOnReloadAdjust)
+    {
+        string complete_key = SectionPrefix + key;
+        List<T1> array = cfg.GetSection(complete_key).Get<List<T1>>() ?? new();
+        log.LogInformation($"Option loaded: {complete_key} = {array.FormatCollectionArray(50)}");
+        HashSet<T2> hashset = fnOnReloadAdjust(array);
+        log.LogInformation($"Option adjusted: {complete_key} = {hashset.FormatCollectionHash(50)}");
+        return hashset;
+    }
 }
