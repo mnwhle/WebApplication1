@@ -19,4 +19,10 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
         var count = await session.QueryOver<Product>().Where(x => x.Id != id && x.Name == name).RowCountAsync(cancellationToken);
         return count > 0;
     }
+
+    public async Task<Product> SelectByNameAsync(string name, CancellationToken cancellationToken)
+    {
+        using NHibernate.ISession session = HibernateHelper.OpenSession();
+        return await session.QueryOver<Product>().Where(x => x.Name == name).SingleOrDefaultAsync(cancellationToken);
+    }
 }
