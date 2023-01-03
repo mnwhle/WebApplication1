@@ -6,14 +6,14 @@ public class HibernateHelper
 
     public static NHibernate.ISession OpenSession() => SessionFactory.OpenSession();
 
-    private static ISessionFactory InitSessionFactoryFluent(Options options)
+    private static ISessionFactory InitSessionFactoryFluent(string connectionString)
     {
         return Fluently.Configure()
-            .Database(PostgreSQLConfiguration.PostgreSQL82.ConnectionString(options.ConnectionString).ShowSql().FormatSql())
-            .Cache(
-                c => c.UseQueryCache()
-                    .UseSecondLevelCache()
-                    .ProviderClass<NHibernate.Cache.HashtableCacheProvider>())
+            .Database(PostgreSQLConfiguration.PostgreSQL82.ConnectionString(connectionString).ShowSql().FormatSql())
+            //.Cache(
+            //    c => c.UseQueryCache()
+            //        .UseSecondLevelCache()
+            //        .ProviderClass<NHibernate.Cache.HashtableCacheProvider>())
             .Mappings(m => m.FluentMappings.AddFromAssemblyOf<Program>())
             .ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(true, true))
             .BuildSessionFactory();
@@ -27,11 +27,11 @@ public class HibernateHelper
         return cfg.BuildSessionFactory();
     }
 
-    public static void InitSessionFactory(Options options, bool overwrite = false)
+    public static void InitSessionFactory(string connectionString, bool overwrite = false)
     {
         if ((SessionFactory is null) || overwrite)
         {
-            SessionFactory = InitSessionFactoryFluent(options);
+            SessionFactory = InitSessionFactoryFluent(connectionString);
         }
     }
 

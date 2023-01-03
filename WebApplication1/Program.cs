@@ -29,7 +29,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-Options options = app.Services.GetRequiredService<Options>();
-HibernateHelper.InitSessionFactory(options);
+var options = app.Services.GetRequiredService<Options>();
+HibernateHelper.InitSessionFactory(options.ConnectionString);
 
 app.Run();

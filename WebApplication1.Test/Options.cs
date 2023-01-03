@@ -5,4 +5,5 @@
 /// </summary>
 public class Options
 {
+    public string ConnectionString { get; set; } = string.Empty;
 }

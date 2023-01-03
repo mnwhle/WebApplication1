@@ -4,6 +4,11 @@ public class ProductRepositoryTest : TestBed<TestFixture>
 {
     public ProductRepositoryTest(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
     {
+        var options = _fixture.GetService<IOptions<Options>>(_testOutputHelper);
+        if (options is not null)
+        {
+            HibernateHelper.InitSessionFactory(options.Value.ConnectionString);
+        }
     }
 
     [Theory]
@@ -21,17 +26,17 @@ public class ProductRepositoryTest : TestBed<TestFixture>
         var repo = _fixture.GetScopedService<IProductRepository>(_testOutputHelper)!;
         Assert.NotNull(repo);
 
-        Task.Run(() => Batch(repo, name, CancellationToken.None));
-
-        async Task Batch(IProductRepository repo, string name, CancellationToken cancellationToken)
-        {
-            await DeleteProductAsync(repo, name, cancellationToken);
-            var id = await InsertProductAsync(repo, name, cancellationToken);
-            Assert.NotNull(id);
-        }
+        Task.Run(() => TryDeleteThenInsert(repo, name, CancellationToken.None));
     }
 
-    public async Task<bool> DeleteProductAsync(IProductRepository repo, string name, CancellationToken cancellationToken)
+    private async Task TryDeleteThenInsert(IProductRepository repo, string name, CancellationToken cancellationToken)
+    {
+        await DeleteProductAsync(repo, name, cancellationToken);
+        var id = await InsertProductAsync(repo, name, cancellationToken);
+        Assert.NotNull(id);
+    }
+
+    private async Task<bool> DeleteProductAsync(IProductRepository repo, string name, CancellationToken cancellationToken)
     {
         var model = await repo.SelectByNameAsync(name, cancellationToken);
         if (model is not null)
@@ -41,7 +46,7 @@ public class ProductRepositoryTest : TestBed<TestFixture>
         return false;
     }
 
-    public async Task<int?> InsertProductAsync(IProductRepository repo, string name, CancellationToken cancellationToken)
+    private async Task<int?> InsertProductAsync(IProductRepository repo, string name, CancellationToken cancellationToken)
     {
         Product model = new() { Name = name };
         return await repo.InsertAsync(model, cancellationToken);
