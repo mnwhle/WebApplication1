@@ -1,10 +1,10 @@
-namespace WebApplication1.Test;
+namespace WebApplication1.Test.Tests;
 
 public class ProductRepositoryTest : TestBed<TestFixture>
 {
     public ProductRepositoryTest(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
     {
-        var options = _fixture.GetService<IOptions<Options>>(_testOutputHelper);
+        var options = _fixture.GetService<IOptions<Config.Options>>(_testOutputHelper);
         if (options is not null)
         {
             HibernateHelper.InitSessionFactory(options.Value.ConnectionString);

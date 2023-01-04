@@ -1,4 +1,4 @@
-﻿namespace WebApplication1.Test;
+﻿namespace WebApplication1.Test.Config;
 
 /// <summary>
 /// The options to be loaded from appsettings.json

@@ -8,6 +8,7 @@ global using WebApplication1.Interfaces;
 global using WebApplication1.Models;
 global using WebApplication1.PipelineBehaviors;
 global using WebApplication1.Services;
+global using WebApplication1.Test.Config;
 global using WebApplication1.Test.Fixtures;
 global using Xunit;
 global using Xunit.Abstractions;

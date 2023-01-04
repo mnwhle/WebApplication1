@@ -1,4 +1,6 @@
-﻿namespace WebApplication1.Test.Fixtures;
+﻿using WebApplication1.Test.Config;
+
+namespace WebApplication1.Test.Fixtures;
 
 public class TestFixture : TestBedFixture
 {
@@ -6,7 +8,7 @@ public class TestFixture : TestBedFixture
         => services
             .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>))
             .AddScoped<IProductRepository, ProductRepository>()
-            .Configure<Options>(config => configuration?.GetSection(nameof(Options)).Bind(config));
+            .Configure<Config.Options>(config => configuration?.GetSection(nameof(Config.Options)).Bind(config));
 
     protected override ValueTask DisposeAsyncCore()
         => new();
