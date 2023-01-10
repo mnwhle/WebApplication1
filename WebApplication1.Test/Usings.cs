@@ -1,7 +1,9 @@
 global using MediatR;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
+global using Moq;
 global using System.Collections.Generic;
 global using WebApplication1.Hibernate;
 global using WebApplication1.Interfaces;

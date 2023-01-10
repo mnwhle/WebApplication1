@@ -4,6 +4,9 @@ namespace WebApplication1.Test.Tests;
 [TestCaseOrderer("WebApplication1.Test.Orderers.AlphabeticalOrderer", "WebApplication1.Test")]
 public class ProductRepositoryTestWithMoq : TestBed<TestFixture>
 {
+    private readonly IProductRepository sut;
+    private readonly Mock<ILogger<ProductRepository>> loggerMock = new();
+
     public ProductRepositoryTestWithMoq(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
     {
         var options = _fixture.GetService<IOptions<Config.Options>>(_testOutputHelper);
@@ -11,6 +14,8 @@ public class ProductRepositoryTestWithMoq : TestBed<TestFixture>
         {
             HibernateHelper.InitSessionFactory(options.Value.ConnectionString);
         }
+        sut = new ProductRepository(loggerMock.Object);
+        Assert.NotNull(sut);
     }
 
     public static IEnumerable<object[]> GetProducts()
@@ -32,17 +37,18 @@ public class ProductRepositoryTestWithMoq : TestBed<TestFixture>
         }
     }
 
+    /// <summary>
+    /// Deletes the existing record if it is found.
+    /// </summary>
+    /// <returns>Both true and false are valid results so there is nothing to assert.</returns>
     [Theory]
     [MemberData(nameof(GetProducts))]
-    public async Task Test01_DeleteProductIfExists(string name)
+    public async Task DeleteProductIfExists(string name)
     {
-        var repo = _fixture.GetScopedService<IProductRepository>(_testOutputHelper)!;
-        Assert.NotNull(repo);
-
-        var model = await repo.SelectByNameAsync(name, default);
+        var model = await sut.SelectByNameAsync(name, default);
         if (model is not null)
         {
-            await repo.DeleteAsync(model.Id, default);
+            await sut.DeleteAsync(model.Id, default);
         }
     }
 
@@ -50,11 +56,8 @@ public class ProductRepositoryTestWithMoq : TestBed<TestFixture>
     [MemberData(nameof(GetProducts))]
     public async Task Test02_InsertProduct(string name)
     {
-        var repo = _fixture.GetScopedService<IProductRepository>(_testOutputHelper)!;
-        Assert.NotNull(repo);
-
         Product model = new() { Name = name };
-        var id = await repo.InsertAsync(model, default);
+        var id = await sut.InsertAsync(model, default);
         Assert.NotNull(id);
     }
 }
