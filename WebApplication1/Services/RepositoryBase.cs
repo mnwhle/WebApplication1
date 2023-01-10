@@ -2,7 +2,7 @@
 
 public abstract class RepositoryBase<T> : IRepository<T> where T : class, IPrimaryKey, new()
 {
-    private readonly ILogger _logger;
+    private readonly ILogger _logger; //TODO Never used?
 
     public RepositoryBase(ILogger logger)
     {
