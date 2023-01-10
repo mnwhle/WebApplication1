@@ -1,9 +1,9 @@
 namespace WebApplication1.Test.Tests;
 
 [TestCaseOrderer("WebApplication1.Test.Orderers.AlphabeticalOrderer", "WebApplication1.Test")]
-public class ProductRepositoryTestWithDependencyInjection : TestBed<TestFixture>
+public class ProductRepositoryTestWithoutMoq : TestBed<TestFixture>
 {
-    public ProductRepositoryTestWithDependencyInjection(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
+    public ProductRepositoryTestWithoutMoq(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
     {
         var options = _fixture.GetService<IOptions<Config.Options>>(_testOutputHelper);
         if (options is not null)

@@ -1,6 +1,4 @@
-﻿using WebApplication1.Test.Config;
-
-namespace WebApplication1.Test.Fixtures;
+﻿namespace WebApplication1.Test.Fixtures;
 
 public class TestFixture : TestBedFixture
 {
