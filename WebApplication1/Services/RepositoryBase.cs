@@ -32,7 +32,7 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : class, IPrima
             using NHibernate.ISession session = HibernateHelper.OpenSession();
             using ITransaction transaction = session.BeginTransaction();
             var result = await session.SaveAsync(model, cancellationToken);
-            transaction.Commit();
+            await transaction.CommitAsync(cancellationToken);
             return (int?)result;
         }
         catch (Exception)
@@ -52,7 +52,7 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : class, IPrima
             using NHibernate.ISession session = HibernateHelper.OpenSession();
             using ITransaction transaction = session.BeginTransaction();
             await session.UpdateAsync(model, cancellationToken);
-            transaction.Commit();
+            await transaction.CommitAsync(cancellationToken);
             return true;
         }
         catch (Exception)
@@ -73,7 +73,7 @@ public abstract class RepositoryBase<T> : IRepository<T> where T : class, IPrima
         try
         {
             await session.DeleteAsync(model, cancellationToken);
-            transaction.Commit();
+            await transaction.CommitAsync(cancellationToken);
             return true;
         }
         catch (Exception)

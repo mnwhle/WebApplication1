@@ -1,11 +1,12 @@
 #if true
+
 namespace WebApplication1.Test.Tests;
 
-[TestCaseOrderer("WebApplication1.Test.Orderers.AlphabeticalOrderer", "WebApplication1.Test")]
+[TestCaseOrderer("WebApplication1.Test.Orderers.AlphabeticalOrderer1", "WebApplication1.Test")]
 public class ProductRepositoryTestWithMoq : TestBed<TestFixture>
 {
-    private readonly IProductRepository sut;
-    private readonly Mock<ILogger<ProductRepository>> loggerMock = new();
+    private readonly IProductRepository _sut;
+    private readonly Mock<ILogger<ProductRepository>> _loggerMock = new();
 
     public ProductRepositoryTestWithMoq(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
     {
@@ -14,8 +15,8 @@ public class ProductRepositoryTestWithMoq : TestBed<TestFixture>
         {
             HibernateHelper.InitSessionFactory(options.Value.ConnectionString);
         }
-        sut = new ProductRepository(loggerMock.Object);
-        Assert.NotNull(sut);
+        _sut = new ProductRepository(_loggerMock.Object);
+        Assert.NotNull(_sut);
     }
 
     public static IEnumerable<object[]> GetProducts()
@@ -37,27 +38,20 @@ public class ProductRepositoryTestWithMoq : TestBed<TestFixture>
         }
     }
 
-    /// <summary>
-    /// Deletes the existing record if it is found.
-    /// </summary>
-    /// <returns>Both true and false are valid results so there is nothing to assert.</returns>
     [Theory]
     [MemberData(nameof(GetProducts))]
-    public async Task DeleteProductIfExists(string name)
+    public async Task Test02_TryDeleteProduct_ThenInsertProduct(string name)
     {
-        var model = await sut.SelectByNameAsync(name, default);
+        CancellationToken cancellationToken = CancellationToken.None;
+        // Make sure the product does not exist.
+        var model = await _sut.SelectByNameAsync(name, cancellationToken);
         if (model is not null)
         {
-            await sut.DeleteAsync(model.Id, default);
+            await _sut.DeleteAsync(model.Id, cancellationToken);
         }
-    }
-
-    [Theory]
-    [MemberData(nameof(GetProducts))]
-    public async Task Test02_InsertProduct(string name)
-    {
-        Product model = new() { Name = name };
-        var id = await sut.InsertAsync(model, default);
+        // Insert a new record.
+        model = new() { Name = name };
+        var id = await _sut.InsertAsync(model, cancellationToken);
         Assert.NotNull(id);
     }
 }
