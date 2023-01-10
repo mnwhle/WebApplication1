@@ -12,17 +12,28 @@ public class ProductRepositoryTestWithDependencyInjection : TestBed<TestFixture>
         }
     }
 
+    public static IEnumerable<object[]> GetProducts()
+    {
+        string[] products = new string[] {
+            "nhibernate",
+            "fluent-validation",
+            "fluent-nhibernate",
+            "cat",
+            "dog",
+            "car",
+            "plane",
+            "train",
+            "lift",
+        };
+        foreach (var product in products)
+        {
+            yield return new object[] { product };
+        }
+    }
+
     [Theory]
-    [InlineData("nhibernate")]
-    [InlineData("fluent-validation")]
-    [InlineData("fluent-nhibernate")]
-    [InlineData("cat")]
-    [InlineData("dog")]
-    [InlineData("car")]
-    [InlineData("plane")]
-    [InlineData("train")]
-    [InlineData("lift")]
-    public async Task Test03_DeleteProductIfExists(string name)
+    [MemberData(nameof(GetProducts))]
+    public async Task Test01_DeleteProductIfExists(string name)
     {
         var repo = _fixture.GetScopedService<IProductRepository>(_testOutputHelper)!;
         Assert.NotNull(repo);
@@ -35,15 +46,7 @@ public class ProductRepositoryTestWithDependencyInjection : TestBed<TestFixture>
     }
 
     [Theory]
-    [InlineData("nhibernate")]
-    [InlineData("fluent-validation")]
-    [InlineData("fluent-nhibernate")]
-    [InlineData("cat")]
-    [InlineData("dog")]
-    [InlineData("car")]
-    [InlineData("plane")]
-    [InlineData("train")]
-    [InlineData("lift")]
+    [MemberData(nameof(GetProducts))]
     public async Task Test02_InsertProduct(string name)
     {
         var repo = _fixture.GetScopedService<IProductRepository>(_testOutputHelper)!;
