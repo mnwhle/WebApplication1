@@ -3,20 +3,19 @@
 namespace WebApplication1.Test.Tests;
 
 [TestCaseOrderer("WebApplication1.Test.Orderers.AlphabeticalOrderer1", "WebApplication1.Test")]
-public class ProductRepositoryTestWithMoq : TestBed<TestFixture>
+public class ProductRepositoryTests : TestBed<TestFixture>
 {
     private readonly IProductRepository _sut;
-    private readonly Mock<ILogger<ProductRepository>> _loggerMock = new();
+    private readonly ILogger<ProductRepository> _logger = Substitute.For<ILogger<ProductRepository>>();
 
-    public ProductRepositoryTestWithMoq(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
+    public ProductRepositoryTests(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
     {
         var options = _fixture.GetService<IOptions<Config.Options>>(_testOutputHelper);
         if (options is not null)
         {
             HibernateHelper.InitSessionFactory(options.Value.ConnectionString);
         }
-        _sut = new ProductRepository(_loggerMock.Object);
-        Assert.NotNull(_sut);
+        _sut = new ProductRepository(_logger);
     }
 
     public static IEnumerable<object[]> GetProducts()

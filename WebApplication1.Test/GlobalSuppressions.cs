@@ -5,4 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Usage", "xUnit1033:Test classes decorated with 'Xunit.IClassFixture<TFixture>' or 'Xunit.ICollectionFixture<TFixture>' should add a constructor argument of type TFixture", Justification = "<Pending>", Scope = "type", Target = "~T:WebApplication1.Test.Tests.ProductRepositoryTestWithMoq")]
+[assembly: SuppressMessage("Usage", "xUnit1033:Test classes decorated with 'Xunit.IClassFixture<TFixture>' or 'Xunit.ICollectionFixture<TFixture>' should add a constructor argument of type TFixture", Justification = "<Pending>", Scope = "type", Target = "~T:WebApplication1.Test.Tests.ProductRepositoryTests")]
